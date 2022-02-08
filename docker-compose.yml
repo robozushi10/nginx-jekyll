@@ -1,0 +1,34 @@
+version: '3.7'
+services:
+  nginx:
+    image: nginx:1.21
+    container_name: mynginx0121
+    ports:
+      - "51338:80"
+    volumes:
+      - "./PV/nginx/etc/nginx/:/etc/nginx/"
+      - "./PV/SHARE/www/dir:/www/dir"
+    logging:
+      driver: json-file
+      options:
+        max-file: '4'
+        max-size: 1m
+    depends_on:
+      - jekyll
+  jekyll:
+    image: jekyll/jekyll:4.0
+    container_name: myjekyll
+    expose:
+      - "4000"
+    command: >
+        bash -c '
+          date +"%Y/%m/%d %H:%M:%S" > /srv/jekyll/index.html
+          jekyll serve --force_polling
+        '
+    volumes:
+      - "./PV/SHARE/www/dir:/srv/jekyll"
+    logging:
+      driver: json-file
+      options:
+        max-file: '4'
+        max-size: 1m
